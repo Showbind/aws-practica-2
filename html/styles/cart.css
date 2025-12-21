@@ -1,0 +1,40 @@
+.statsDiv {
+    margin: 0 auto;
+    align-self: center;
+    overflow: auto;
+}
+
+.totalPriceDiv {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.cartProductsDiv {
+    height: 88%;
+    margin-bottom: 20px;
+}
+
+.remove_from_cart_button{
+    color: rgba(241, 63, 78, 0.822);
+}
+
+.remove_from_cart_button:hover{
+    color: rgb(255, 0, 0) !important;
+}
+
+.remove_from_cart_button:active{
+    color: rgb(68, 8, 8) !important;
+}
+
+#empty_cart_message{
+    text-align: center;
+    font-size: 32px;
+    margin-top: 30%;
+    color: #555;
+}
+
+#cartProductsTable th,
+#cartProductsTable td {
+    vertical-align: middle;
+}

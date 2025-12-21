@@ -1,0 +1,149 @@
+html,
+body {
+    display: flex;
+    flex-direction: column;
+
+    height: 100vh;
+    margin: 0;
+
+    overflow-x: hidden;
+}
+
+.main {
+    display: flex;
+    flex-direction: row;
+
+    flex: 1 1 auto;
+
+    height: 800px;
+    min-height: 0;
+
+    .products_section {
+        height: 100%;
+        flex: 1 1 auto;
+        background: #ffffff;
+        min-height: 0;
+        margin-bottom: 10px;
+
+        .scrollabe_products {
+            height: 100%;
+
+            display: flex;
+            justify-content: space-evenly;
+            flex-wrap: wrap;
+            gap: 30px;
+
+            overflow-y: auto !important;
+            overflow: visible;
+            scrollbar-width: none;
+
+            padding-top: 30px;
+            padding-bottom: 30px;
+        }
+    }
+
+    .left_menu,
+    .edit_menu {
+        flex: auto;
+        background-color: rgb(255, 255, 255);
+        padding: 25px;
+
+        .search_button {
+            width: 100%;
+            height: 40px;
+
+            margin: 0 auto;
+            margin-top: 15px;
+            margin-left: 0px;
+
+            border-radius: 6px;
+            border: none;
+
+            background-color: #131212;
+            color: white;
+        }
+
+        .left_menu_fields {
+            margin-bottom: 10px;
+            margin-left: 10px;
+        }
+    }
+
+    @media (min-width: 768px) {
+        .left_menu {
+            padding-left: 30px;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .left_menu {
+            width: 100%;
+            height: 36vh;
+            padding: 0 auto;
+            overflow: auto;
+
+
+        }
+
+        .search_button {
+            margin-left: 0px !important;
+        }
+    }
+}
+
+@media (min-width: 768px) {
+    .add_product_button {
+        width: 100%;
+        height: 40px;
+
+        margin-top: 15px;
+
+        border-radius: 6px;
+        border: none;
+
+        background-color: #131212;
+        color: white;
+    }
+}
+
+@media (max-width: 768px) {
+    .add_product_button {
+        width: 75%;
+        height: 40px;
+
+        margin-top: 15px;
+
+        border-radius: 6px;
+        border: none;
+
+        background-color: #131212;
+        color: white;
+    }
+}
+
+
+footer {
+    height: 200px;
+    background-color: #131212;
+    text-align: center;
+    color: rgb(255, 255, 255);
+
+    align-content: center;
+
+    flex-shrink: 0;
+
+    .footer_project_info {
+        width: fit-content;
+
+        margin: 0 auto;
+    }
+
+    .footer_link {
+        color: white;
+        text-decoration: none;
+    }
+
+    .footer_link:hover {
+        text-decoration: underline;
+    }
+}

@@ -1,0 +1,43 @@
+.navbar {
+    background-color: #131212 !important;
+    position: sticky;
+    flex-shrink: 0;
+    min-height: 80px;
+}
+
+/* BOTON MENU DESPLEGABLE */
+.navbar-toggler {
+    border: none;
+    box-shadow: none;
+    outline: none !important;
+
+}
+
+.navbar-toggler:focus {
+    border: none;
+    box-shadow: none;
+    outline: none !important;
+}
+
+.nav-link {
+    /* Items menu desplegable */
+    font-family: "Noto Sans Newa", sans-serif;
+    font-weight: 600;
+    font-style: normal;
+    font-size: 16px;
+    color: #ffffff;
+}
+
+.nav-link:hover {
+    color: #d61929ef;
+    text-decoration: underline;
+}
+
+.nav-link:active {
+    color: #eb3948;
+    text-decoration: underline;
+}
+
+.navbar-light .navbar-toggler-icon {
+    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='white' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
+}
