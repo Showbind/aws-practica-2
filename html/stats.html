@@ -51,7 +51,6 @@
 
                 <!-- ELEMENTOS LADO IZQUIERDO NAVBAR -->
                 <ul class="navbar-nav me-auto">
-                    <li class="nav-item"><a class="nav-link" aria-current="page" href="products.html">Productos</a></li>
                     <li class="nav-item"><a class="nav-link " aria-current="page" href="stats.html">Dashboard</a>
                     </li>
                 </ul>
@@ -75,17 +74,29 @@
     <div class="row main">
         <!-- CONTENIDO -->
         <div class="col-12 col-md-8 products_section">
-            <div class="display_stats" style="display: flex; justify-content: space-evenly; gap: 30px; height: 100%;">
-                <div class="statsDiv" id="mapDiv" style="width: 50%; height: 50%;"></div>
-                <div class="statsDiv" style="width: fit-content;"><canvas id="chartDiv" width="600"></div>
+            <div class="display_stats" style="display: flex; flex-direction: column;">
+                <!-- <div class="" id="mapDiv" style="width: 50%; height: 10%;"></div> -->
+                <div class="">
+                    <label for="opciones" class="form-label">Selecciona el sensor</label>
+                    <select class="form-select" id="opciones">
+                        <option>Opción 1</option>
+                        <option>Opción 2</option>
+                        <option>Opción 3</option>
+                    </select>
+                </div>
+
+            </div>
+            <div style="width: 70%; height: 70%; margin: 0 auto;">
+                <canvas class="chartDiv" id="chartCanvas"></canvas>
             </div>
         </div>
-        <footer>
-            <div class="footer_project_info">
-                <a class="footer_link" href="https://github.com/Showbind/Programacion-Web--Proyecto-Final">
-                    Proyecto Final - Programación Web - Gabriel Estévez - Universidad de Burgos - 2025</a>
-            </div>
-        </footer>
+    </div>
+    <footer>
+        <div class="footer_project_info">
+            <a class="footer_link" href="https://github.com/Showbind/Programacion-Web--Proyecto-Final">
+                Proyecto Final - Programación Web - Gabriel Estévez - Universidad de Burgos - 2025</a>
+        </div>
+    </footer>
     </div>
 </body>
 <style>
@@ -94,6 +105,10 @@
         align-self: center;
         margin-left: 100px;
     }
+
+    /* * {
+        border: solid red 1px;
+    } */
 </style>
 
 </html>

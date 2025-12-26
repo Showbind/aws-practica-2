@@ -174,7 +174,7 @@ function validateInputValue(inputElement, regex, errorMsg = "Datos no válidos."
 // Devuelve "true" si el usuario se ha creado con éxito
 async function fetchCreateUser(curlBody, formStatusMsg) {
     try {
-        const response = await fetch('http://web-api:8000/api/auth/login', {
+        const response = await fetch('/api/users/register', {
             method: 'POST',
             headers: {
                 "accept": "*/*",
@@ -207,7 +207,7 @@ async function fetchCreateUser(curlBody, formStatusMsg) {
 
 async function fetchLogInUser(curlBody, formStatusMsg) {
     try {
-        const response = await fetch('http://localhost:8080/api/auth/login', {
+        const response = await fetch('/api/auth/login', {
             method: 'POST',
             headers: {
                 "accept": "*/*",

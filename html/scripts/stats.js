@@ -1,78 +1,82 @@
-import { loadUserSession, fetchGetAllProducts } from "./products.js";
 export { loadStatsPage };
 
 function loadStatsPage() {
     const userData = loadUserSession();
     const userToken = userData["access_token"]
-    let a = document.getElementById("mapDiv");
-    a.innerHTML = "";
 
+
+    loadStatsChart(userToken);
 }
 
-async function loadMap(userToken) {
-    // Crear mapa
-    const map = new ol.Map({
-        target: 'mapDiv',
-        layers: [
-            new ol.layer.Tile({
-                source: new ol.source.OSM(), // OSM = OpenStreetMap 
-            }),
-        ],
-        view: new ol.View({
-            center: ol.proj.fromLonLat([-3.70256, 40.4165]), // Cordenadas Madrid para centrar el mapa en España
-            zoom: 2,
-        }),
+// Cargar Usuario
+function loadUserSession() {
+
+    const userData = logUser();
+
+    // Mostrar Nombre del Usuario
+    const usernameTag = document.getElementById("username_tag");
+    usernameTag.innerHTML = userData["name"];
+
+    const logOut = document.getElementById("log_out");
+
+    // Botón Cerrar Sesión
+    logOut.addEventListener('click', (event) => {
+        event.preventDefault();
+        localStorage.clear();
+        window.location.href = "login.html";
     });
 
-    // Crear y Posicionar un pin en el mapa
-    function setLocationPin(longitud, latitud, color = "red") {
-        // Crear icono pin
-        const pin = document.createElement('i');
-        pin.className = 'pin fa-solid fa-map-pin'; // Clases de Openstreetmap y de fontawesome
-        pin.style.color = color;
+    return userData
+}
 
-        // Añadir pin al mapa
-        const marker = new ol.Overlay({
-            position: ol.proj.fromLonLat([longitud, latitud]),
-            positioning: 'bottom-center',
-            element: pin,
-            stopEvent: false,
-        });
-        map.addOverlay(marker);
-    }
+function logUser() {
+    let userDataInLocalStorage = localStorage.getItem("userData");
 
-    // Mostrar coordenadas de los usuarios en el mapa
-    const coordinates = await fetchGetUsersCoordinates(userToken);
-    for (const position of coordinates) {
-        console.log(position);
-        setLocationPin(position["longitude"], position["latitude"], "#f50f4c")
-    }
+    if (!userDataInLocalStorage) {
+        console.error("Error: Acceso no autorizado");
+        window.location.href = "login.html";
+    };
 
+    const userData = JSON.parse(userDataInLocalStorage);
+
+    return userData;
 }
 
 async function loadStatsChart(authToken) {
-    
-    const chartDiv = document.getElementById('chartDiv');
+
+    const chartCanvas = document.getElementById('chartCanvas');
 
     // Obtener datos para el grafico
-    const products = await fetchGetAllProducts(authToken);
-    const soldProducts = (products.filter(item => item["state"] == "Comprado")).length;
-    const forSaleProducts = products.length - soldProducts;
+    let sensorData = await fetchGetSensorData("MassConcentrationPm1p0", 0, authToken);
 
+    let a = []
+    let b
+    for (const data of sensorData) {
+        b = {
+            "x": data.timestamp,
+            "y": data.value
+        }
 
-    new Chart(chartDiv, {
-        type: 'pie',
+        a.push(b)
+    }
+    console.log(sensorData);
+
+    new Chart(chartCanvas, {
+        type: 'line',
         data: {
-            labels: ["En Venta","Vendidos"],
+            labels: [],
             datasets: [{
-                label: '# of Products',
-                data: [forSaleProducts, soldProducts],
-                borderWidth: 1
+                label: 'Temperatura (°C)',
+                data: a,
+                borderColor: 'rgb(75, 192, 192)',
+                tension: 0.3,        // suaviza la línea
+                pointRadius: 0,      // mejor rendimiento
+                fill: false
             }]
         },
         options: {
-            title:{
-                display:true,
+            title: {
+                display: true,
                 text: "Productos Vendidos ",
             },
             responsive: true
@@ -80,9 +84,9 @@ async function loadStatsChart(authToken) {
     });
 }
 
-async function fetchGetUsersCoordinates(authToken) {
+async function fetchGetSensorData(sensorId, dateTime = 0, authToken) {
     try {
-        let response = await fetch("https://practicaprogramacionweb.duckdns.org/users/coords", {
+        let response = await fetch(`/api/sensors/${sensorId}/?start_time=${dateTime}`, {
             headers: {
                 "accept": "*/*",
                 "Authorization": `Bearer ${authToken}`

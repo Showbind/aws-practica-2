@@ -1,7 +1,10 @@
 import json
 import paho.mqtt.client as mqtt
 import time
+import requests
 from threading import Event
+import datetime
+
 
 # Imports
 try:
@@ -22,6 +25,11 @@ class MqttSensorRead:
             "sensor/data/sen55",
             "sensor/data/gas_sensor",
         ]
+
+        # Endpoint enviar datos
+        self.LOGIN_URL = "/api/auth/login"
+        self.URL = "/api/sensors/data/"
+        self.bearer = None
 
         # Crear json logger
         if Logger:
@@ -49,14 +57,31 @@ class MqttSensorRead:
         try:
             # Decodificar y convertir el mensaje de JSON a diccionario
             payload = json.loads(msg.payload.decode("utf-8"))
-            a = json.dumps(payload)
+            sensor_data_msg = json.dumps(payload)
+            
+            timestamp = datetime.now().isoformat()
+
+            # Enviar datos al server
+            try:
+                response = requests.post(
+                    url=self.URL, 
+                    headers={
+                        "authorization": f"Bearer {self.bearer}",
+                    },
+                    json={
+                        "timestamp": timestamp,
+                        "data": payload
+                    },
+                )
+            except:
+                print("Error al enviar los datos al servidor")
 
             if Logger:
-                self.json_logger.log_data(str(a) + "\n")
+                self.json_logger.log_data(str(sensor_data_msg) + "\n")
             else:
                 print("Fallo con la importación del módulo JsonSink")
 
-            print(a)  # Mostrar el mensaje formateado
+            print(sensor_data_msg)  # Mostrar el mensaje formateado
         except json.JSONDecodeError as e:
             print(f"Error decodificando JSON: {e}")
 
@@ -67,6 +92,20 @@ class MqttSensorRead:
         # Asignar las funciones de callback
         self.client.on_connect = self.on_connect
         self.client.on_message = self.on_message
+        
+        # Obtener jwt
+        response = requests.post(
+            url=self.LOGIN_URL, 
+            json={
+                "email": "api@example.com",
+                "password": "123456"
+            },
+        )
+
+        if response.ok:
+            data = response.json()
+            self.bearer = data["access_token"]
+            print("\nAutenticación exitosa.\n")
 
         # Conectar al broker MQTT
         self.client.connect(self.BROKER, self.PORT, 60)
@@ -85,7 +124,7 @@ class MqttSensorRead:
 
 
 def main():
-    client = MqttSensorRead()   
+    client = MqttSensorRead()
     client.run()
 
 if __name__ == "__main__":
