@@ -41,3 +41,16 @@ class Item(BaseModel):
 @app.get("/")
 def read_root(current_user = Depends(require_token)): # Probando el uso de JWT
     return {"Hello": "World"}
+
+iot_last_message = "No se ha recibido ningun mensaje"
+
+@app.post("/iot/")
+def read_sensor_data(current_user = Depends(require_token), item: dict = None):
+    global iot_last_message 
+    iot_last_message = item
+    return {"message": iot_last_message}
+
+@app.get("/iot/")
+def send_sensor_data(current_user = Depends(require_token)):
+    global iot_last_message 
+    return {"message": iot_last_message}

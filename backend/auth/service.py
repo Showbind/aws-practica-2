@@ -54,7 +54,7 @@ def create_access_token(subject: str, expires_delta: int = None) -> str:
     return encoded_jwt
 
 # Bearer JWT
-bearer_scheme  = HTTPBearer()
+bearer_scheme = HTTPBearer()
 
 def require_token(auth_credentials: str = Depends(bearer_scheme), db: Session = Depends(get_db)):
     """

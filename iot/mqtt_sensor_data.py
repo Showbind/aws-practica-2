@@ -8,7 +8,7 @@ import datetime
 
 # Imports
 try:
-    from src.logger import Logger
+    from .logger import Logger
 except (ImportError, ModuleNotFoundError):
     Logger = None
 
@@ -27,8 +27,8 @@ class MqttSensorRead:
         ]
 
         # Endpoint enviar datos
-        self.LOGIN_URL = "/api/auth/login"
-        self.URL = "/api/sensors/data/"
+        self.LOGIN_URL = "web-api/auth/login"
+        self.URL = "web-api/sensors/data/"
         self.bearer = None
 
         # Crear json logger
@@ -73,8 +73,12 @@ class MqttSensorRead:
                         "data": payload
                     },
                 )
-            except:
-                print("Error al enviar los datos al servidor")
+            except requests.HTTPError as error:
+                if response.status_code == 401:
+                    print("Token expirado. Obteniendo uno nuevo...")
+                    self.get_token()
+                else:
+                    print("Error al enviar los datos al servidor\n", error)
 
             if Logger:
                 self.json_logger.log_data(str(sensor_data_msg) + "\n")
@@ -85,14 +89,7 @@ class MqttSensorRead:
         except json.JSONDecodeError as e:
             print(f"Error decodificando JSON: {e}")
 
-    def run(self):
-        # Crear un cliente MQTT
-        self.client = mqtt.Client()
-
-        # Asignar las funciones de callback
-        self.client.on_connect = self.on_connect
-        self.client.on_message = self.on_message
-        
+    def get_token(self):
         # Obtener jwt
         response = requests.post(
             url=self.LOGIN_URL, 
@@ -106,6 +103,16 @@ class MqttSensorRead:
             data = response.json()
             self.bearer = data["access_token"]
             print("\nAutenticación exitosa.\n")
+
+    def run(self):
+        # Crear un cliente MQTT
+        self.client = mqtt.Client()
+
+        # Asignar las funciones de callback
+        self.client.on_connect = self.on_connect
+        self.client.on_message = self.on_message
+        
+
 
         # Conectar al broker MQTT
         self.client.connect(self.BROKER, self.PORT, 60)
