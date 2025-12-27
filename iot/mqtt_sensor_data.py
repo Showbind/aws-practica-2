@@ -111,8 +111,6 @@ class MqttSensorRead:
         # Asignar las funciones de callback
         self.client.on_connect = self.on_connect
         self.client.on_message = self.on_message
-        
-
 
         # Conectar al broker MQTT
         self.client.connect(self.BROKER, self.PORT, 60)

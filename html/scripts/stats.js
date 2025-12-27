@@ -1,6 +1,7 @@
 export { loadStatsPage };
 
 let myChart = null;
+let lastMsg = null;
 
 function loadStatsPage() {
     const userData = loadUserSession();
@@ -17,6 +18,7 @@ function loadStatsPage() {
         loadStatsChart(userToken);
     });
 
+    loadIotCoreMessage(userToken);
     loadStatsChart(userToken);
 }
 
@@ -54,7 +56,17 @@ function logUser() {
     return userData;
 }
 
+async function loadIotCoreMessage(authToken) {
+    const iotCoreMsgTag = document.getElementById("iot_core_msg");
+    setInterval(async() => {
+        let msg = await fetchGetIotData(authToken)
 
+        if (msg != lastMsg) {
+            lastMsg = msg
+            iotCoreMsgTag.textContent = msg
+        }
+    }, 1500)
+}
 
 async function loadStatsChart(authToken) {
     const chartCanvas = document.getElementById('chartCanvas');
@@ -148,6 +160,32 @@ async function loadStatsChart(authToken) {
 async function fetchGetSensorData(sensorId, dateTime = 0, authToken) {
     try {
         let response = await fetch(`/api/sensors/${sensorId}/?start_time=${dateTime}`, {
+            headers: {
+                "accept": "*/*",
+                "Authorization": `Bearer ${authToken}`
+            },
+        });
+
+        if (!response.ok) {
+            if (response.status == 401) { // Token no válido o caducado
+                localStorage.clear();
+                window.location.href = "login.html";
+            };
+
+            return false;
+        };
+
+        const data = await response.json();
+        return data;
+    }
+    catch (error) {
+        console.error("Error: ", error);
+    }
+}
+
+async function fetchGetIotData(authToken) {
+    try {
+        let response = await fetch(`/api/iot/`, {
             headers: {
                 "accept": "*/*",
                 "Authorization": `Bearer ${authToken}`
