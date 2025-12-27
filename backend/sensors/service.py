@@ -4,7 +4,16 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from common.models import Sensor
 from common.repositories import add_many
+import json
+import os
 
+# AWS
+import io
+import boto3
+
+BUCKET_NAME =os.getenv("BUCKET_NAME")
+S3_PREFIX = os.getenv("S3_PREFIX")
+S3_CLIENT = boto3.client("s3")
 
 def save_sensors_data(item:SensorsPayload, db: Session):
     sensors = item.data
@@ -19,9 +28,22 @@ def save_sensors_data(item:SensorsPayload, db: Session):
         )
         rows.append(sensor_data)
 
-    return add_many(rows, db)
+        data_json = {
+            "sensor_id": key,
+            "timestamp": timestamp.isoformat(),
+            "value": val
+        }
+
+        s3_key = f"{S3_PREFIX}/{data_json["sensor_id"]}/{timestamp.isoformat()}.json"
+        S3_CLIENT.upload_fileobj(
+            io.BytesIO(json.dumps(data_json).encode("utf-8")),
+            BUCKET_NAME,
+            s3_key
+        )
+        
+    items =  add_many(rows, db) 
+    return items
     
-     # Llamar funcion BD guardar en tabla
 
 
 def get_sensor_data_from_timestamp(model, sensor_id, timestamp, db:Session):
