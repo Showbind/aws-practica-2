@@ -63,7 +63,7 @@ async function loadIotCoreMessage(authToken) {
 
         if (msg != lastMsg) {
             lastMsg = msg
-            iotCoreMsgTag.textContent = msg
+            iotCoreMsgTag.textContent = JSON.stringify(msg, null, 2);
         }
     }, 1500)
 }
