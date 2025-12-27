@@ -54,3 +54,7 @@ def read_sensor_data(current_user = Depends(require_token), item: dict = None):
 def send_sensor_data(current_user = Depends(require_token)):
     global iot_last_message 
     return {"message": iot_last_message}
+
+@app.get("/health")
+def health_check():
+    return {"status": "ok"}

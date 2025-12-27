@@ -5,7 +5,6 @@ import requests
 from threading import Event
 import datetime
 
-
 # Imports
 try:
     from .logger import Logger
@@ -97,12 +96,15 @@ class MqttSensorRead:
                 "email": "api@example.com",
                 "password": "123456"
             },
+            timeout=1
         )
 
         if response.ok:
             data = response.json()
             self.bearer = data["access_token"]
-            print("\nAutenticación exitosa.\n")
+            print("\nAutenticación exitosa.\n", flush=True)
+        else:
+            print("Error de autenticación:", response.status_code, response.text, flush=True)
 
     def run(self):
         # Crear un cliente MQTT
@@ -113,6 +115,16 @@ class MqttSensorRead:
         self.client.on_message = self.on_message
 
         # Obtener token de autenticación
+        while True:
+            try:
+                r = requests.get("http://web-api:8000/health", timeout=5)
+                if r.status_code == 200:
+                    print("El API esta listo")
+                    break
+            except requests.ConnectionError:
+                print("El API no esta listo, reintentando...")
+
+        time.sleep(2)
         self.get_token()
         
         # Conectar al broker MQTT
@@ -129,7 +141,6 @@ class MqttSensorRead:
                 self.client.disconnect()
                 print("\n Finalizando Broker MQTT... \n")
                 break
-
 
 def main():
     client = MqttSensorRead()

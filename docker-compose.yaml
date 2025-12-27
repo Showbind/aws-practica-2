@@ -33,6 +33,7 @@ services:
       - network_1
     depends_on:
       - web-api
+      - nginx
 
 networks:
   network_1:
