@@ -27,8 +27,8 @@ class MqttSensorRead:
         ]
 
         # Endpoint enviar datos
-        self.LOGIN_URL = "web-api/auth/login"
-        self.URL = "web-api/sensors/data/"
+        self.LOGIN_URL = "http://web-api:8000/auth/login"
+        self.URL = "http://web-api:8000/sensors/data/"
         self.bearer = None
 
         # Crear json logger
@@ -112,6 +112,9 @@ class MqttSensorRead:
         self.client.on_connect = self.on_connect
         self.client.on_message = self.on_message
 
+        # Obtener token de autenticación
+        self.get_token()
+        
         # Conectar al broker MQTT
         self.client.connect(self.BROKER, self.PORT, 60)
 
